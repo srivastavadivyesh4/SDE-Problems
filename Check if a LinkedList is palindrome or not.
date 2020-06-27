@@ -1,0 +1,114 @@
+
+                                                        /* To check if a singly linked list is pallindrome or not */
+ 
+ /*
+    
+     Hey, to check whether a linked list is pallindrome we can use two pointer place one on
+     starting and other on end and move both to right and left places by 1 and compare elements.
+     
+       
+        1 -> 2 -> 3-> 3 -> 2 -> 1
+        ^                       ^
+        | -                  -  |
+    Pointer 1                 Pointer 2 
+    
+    But can we do it so, in singly linked list ????
+    
+    The issue which we face :- 
+    
+    1.) We cannot directly go the last element in singly linked list like array, random access is not allowed in linked list
+    2.) We can move pointer 1 to mid of linked list easily but can we move pointer 2 to mid ?? Nope
+
+     So, can we use an additional data structure to keep the elements of LL from head to tail and pick the element in order Tail to head ( LIFO order) ??
+     
+     Yes, we can use Stack Data Structure !!
+ */
+                   
+-> Approach 1 : Using stack
+
+ /* 
+    Put all elements of linked list from head to tail in stack and start popping element till
+    mid of linked list . So, have you noticed this will work as pointer 2 ???
+    
+    And simultaneously we can move our pointer 1 from head of linked list till mid 
+    
+    and compared head->value and stack element , and keep moving head pointer to next and pop the elemnt of stack
+    
+*/
+
+* Here is the implementation of above approach
+
+ bool isPalindrome(Node *head)
+{
+    stack<int>s;
+    
+     Node* temp = head;
+     
+       while(temp)             // Putting all elements in stack so we can traverse in reverse order
+      {
+          s.push(temp->data);
+          temp=temp->next;
+      }
+      
+        while(s.size()/2)         // Travel till half of the linked list, to check if its pallindrome        
+      {
+          if(head->data!=s.top())
+            return false;
+            
+            s.pop();
+            head=head->next;
+      }
+      
+      return true;
+}
+
+* Time Complexity :- O(n) becoz one we travelled whole linked list to put elements in stack and then again can travel till atmost half of linked list to check pallindrome So, O(n)+O(n/2)~O(n)
+* Space Complexity :- O(n) becoz we have used which can put n elements
+
+
+*  Is the interviewer satisfied ??????????
+
+* Nope, man you are using O(n) space , but this problem can be solved in O(1) space with single traversal . We have to modify our linked list
+
+* What if we reverse our first or second half of linked list and then compare other half with reversed half
+
+
+  ->  Aprroach 2:- ( Reversing first half of LL )
+
+                                              // Code starts
+                                              
+  bool isPalindrome(Node *head)
+{
+   Node* temp = head;  // Will assist slow pointer to move to next
+   Node* prev = NULL;  // Will help in changing the next pointer
+   Node* fast = head;  // Will help in checking whether linked list is odd or even and in finding mid
+   Node* slow = head;  // Will start from mid+1 to traverse the second half of linked list
+   
+      while(fast and fast->next)   // Finding mid of LL, reversing first half of LL
+     {
+        fast=fast->next->next;
+        
+         temp=slow->next;
+         slow->next=prev;
+         prev=slow;
+         slow=temp;
+     }
+     
+     if(fast)          // If length of linked is odd
+      slow=slow->next;
+      
+      while(slow)      // Comparing first half and second half of LL
+      {
+          if(slow->data != prev->data)
+           return false;
+           
+          slow=slow->next;
+          prev=prev->next;
+      }
+      
+      return true;
+}
+                                          // Code ends here 
+
+* Time Complexity :- O(n)
+* Space Complexity :- O(1)
